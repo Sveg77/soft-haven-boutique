@@ -1,82 +1,40 @@
 
 
-## План: ИИ-чат-бот + админка чатов
+## План: Telegram-бот для уведомлений о заказах
 
-Большая фича из нескольких частей: база данных для чатов, edge function для ИИ, виджет на сайте, страница чатов в админке.
+### Подход
 
----
+Создать edge function `notify-telegram`, которая отправляет сообщение в Telegram-чат при новом заказе. Вызывать её из двух мест: `CheckoutPage.tsx` (заказы с сайта) и `chat-bot/index.ts` (заказы через чат-бот).
 
-### 1. База данных — 2 новые таблицы
+### 1. Подключить Telegram-коннектор
 
-**`chat_sessions`** — сессии чата:
-- `id` uuid PK
-- `customer_name` text NOT NULL
-- `phone` text NOT NULL
-- `status` text DEFAULT 'active' (active / needs_operator / closed)
-- `created_at` timestamptz DEFAULT now()
-- `updated_at` timestamptz DEFAULT now()
+Использовать `standard_connectors--connect` с `connector_id: telegram` для получения `TELEGRAM_API_KEY` и `LOVABLE_API_KEY`.
 
-**`chat_messages`** — сообщения:
-- `id` uuid PK
-- `session_id` uuid FK → chat_sessions
-- `role` text NOT NULL (user / assistant / operator)
-- `content` text NOT NULL
-- `created_at` timestamptz DEFAULT now()
+Перед подключением нужно создать бота через [@BotFather](https://t.me/BotFather) в Telegram и получить токен. Также нужно узнать `chat_id` администратора (можно через бота [@userinfobot](https://t.me/userinfobot) или группу).
 
-RLS: публичный INSERT/SELECT на обе таблицы (пользователи без авторизации); authenticated — полный доступ. Realtime включён для обеих таблиц.
+### 2. Edge Function `notify-telegram`
 
----
+Файл: `supabase/functions/notify-telegram/index.ts`
 
-### 2. Edge Function `chat-bot`
+- Принимает `{ order_id, customer_name, phone, total, items, delivery_method, comment }`.
+- Формирует красивое сообщение с эмодзи и деталями заказа.
+- Отправляет через connector gateway (`https://connector-gateway.lovable.dev/telegram/sendMessage`).
+- `chat_id` хранится как секрет `TELEGRAM_CHAT_ID`.
 
-- Получает `{ session_id, message }`.
-- Загружает каталог товаров из БД (названия, цены, характеристики, наличие).
-- Загружает историю сообщений сессии.
-- Вызывает Lovable AI (`google/gemini-3-flash-preview`) с системным промптом:
-  - «Ты консультант магазина "Уютный Дом". Помогаешь выбрать товары, считаешь итог. Когда клиент готов — вызови функцию `place_order`. Если не можешь помочь — вызови `request_operator`.»
-- Tool calling: `place_order(items, delivery_method, ...)` и `request_operator(reason)`.
-- При `place_order` — создаёт запись в `orders` + `order_items`, обновляет статус сессии.
-- При `request_operator` — обновляет `chat_sessions.status = 'needs_operator'`.
-- Сохраняет сообщения в `chat_messages`.
+### 3. Вызов из CheckoutPage
 
----
+После успешного создания заказа и order_items — вызвать `supabase.functions.invoke("notify-telegram", { body: {...} })`. Fire-and-forget (не блокирует пользователя).
 
-### 3. Виджет чата на сайте
+### 4. Вызов из chat-bot
 
-Новый компонент `src/components/ChatWidget.tsx`:
-- Плавающая кнопка в правом нижнем углу (иконка `MessageCircle`).
-- По клику — всплывающее окно чата.
-- Первый экран: форма «Имя + Телефон + согласие с политикой конфиденциальности».
-- После отправки — создаётся `chat_session`, открывается чат.
-- Сообщения отправляются через edge function, ответ ИИ стримится.
-- Realtime-подписка на `chat_messages` для получения сообщений оператора.
-- Сессия сохраняется в `localStorage` для возобновления.
-- Добавляется в `App.tsx` глобально (вне Routes, только на публичных страницах).
-
----
-
-### 4. Админка — страница «Чаты» `/admin/chats`
-
-Новый файл `src/pages/admin/Chats.tsx`:
-- Список всех `chat_sessions` с фильтрацией по статусу (active / needs_operator / closed).
-- Сессии с `needs_operator` выделены визуально (бейдж, цвет).
-- При клике — диалог с полной историей сообщений.
-- Возможность оператору написать ответ (сохраняется как `role: 'operator'`).
-- Возможность закрыть сессию.
-- Realtime-обновление списка и сообщений.
-
-Навигация: добавить ссылку «Чаты» с иконкой `MessageSquare` в `AdminLayout.tsx`. Роут в `App.tsx`.
-
----
+В `place_order` хендлере — аналогичный вызов notify-telegram после создания заказа.
 
 ### Файлы
 
 | Действие | Файл |
 |----------|------|
-| Миграция | Таблицы `chat_sessions`, `chat_messages` + RLS + realtime |
-| Создать | `supabase/functions/chat-bot/index.ts` |
-| Создать | `src/components/ChatWidget.tsx` |
-| Создать | `src/pages/admin/Chats.tsx` |
-| Изменить | `src/App.tsx` — добавить ChatWidget + роут /admin/chats |
-| Изменить | `src/components/AdminLayout.tsx` — ссылка «Чаты» |
+| Создать | `supabase/functions/notify-telegram/index.ts` |
+| Изменить | `src/pages/CheckoutPage.tsx` — вызов notify-telegram |
+| Изменить | `supabase/functions/chat-bot/index.ts` — вызов notify-telegram |
+| Секрет | `TELEGRAM_CHAT_ID` — ID чата/группы для уведомлений |
 
