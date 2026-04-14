@@ -14,7 +14,158 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      categories: {
+        Row: {
+          created_at: string
+          id: string
+          image_url: string | null
+          name: string
+          slug: string
+          sort_order: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          name: string
+          slug: string
+          sort_order?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          name?: string
+          slug?: string
+          sort_order?: number
+        }
+        Relationships: []
+      }
+      order_items: {
+        Row: {
+          id: string
+          order_id: string
+          price: number
+          product_id: string | null
+          quantity: number
+        }
+        Insert: {
+          id?: string
+          order_id: string
+          price?: number
+          product_id?: string | null
+          quantity?: number
+        }
+        Update: {
+          id?: string
+          order_id?: string
+          price?: number
+          product_id?: string | null
+          quantity?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_items_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orders: {
+        Row: {
+          address: string | null
+          comment: string | null
+          created_at: string
+          customer_name: string
+          delivery_method: string
+          email: string | null
+          id: string
+          phone: string
+          status: string
+          total: number
+        }
+        Insert: {
+          address?: string | null
+          comment?: string | null
+          created_at?: string
+          customer_name: string
+          delivery_method?: string
+          email?: string | null
+          id?: string
+          phone: string
+          status?: string
+          total?: number
+        }
+        Update: {
+          address?: string | null
+          comment?: string | null
+          created_at?: string
+          customer_name?: string
+          delivery_method?: string
+          email?: string | null
+          id?: string
+          phone?: string
+          status?: string
+          total?: number
+        }
+        Relationships: []
+      }
+      products: {
+        Row: {
+          category_id: string | null
+          characteristics: Json | null
+          created_at: string
+          description: string | null
+          id: string
+          image_url: string | null
+          images: string[] | null
+          in_stock: boolean
+          name: string
+          price: number
+        }
+        Insert: {
+          category_id?: string | null
+          characteristics?: Json | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          images?: string[] | null
+          in_stock?: boolean
+          name: string
+          price?: number
+        }
+        Update: {
+          category_id?: string | null
+          characteristics?: Json | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          images?: string[] | null
+          in_stock?: boolean
+          name?: string
+          price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "products_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
