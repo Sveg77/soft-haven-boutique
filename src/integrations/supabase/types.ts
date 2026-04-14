@@ -43,25 +43,40 @@ export type Database = {
       }
       order_items: {
         Row: {
+          color: string | null
           id: string
+          line_total: number
+          material: string | null
           order_id: string
           price: number
           product_id: string | null
+          product_name: string | null
           quantity: number
+          size: string | null
         }
         Insert: {
+          color?: string | null
           id?: string
+          line_total?: number
+          material?: string | null
           order_id: string
           price?: number
           product_id?: string | null
+          product_name?: string | null
           quantity?: number
+          size?: string | null
         }
         Update: {
+          color?: string | null
           id?: string
+          line_total?: number
+          material?: string | null
           order_id?: string
           price?: number
           product_id?: string | null
+          product_name?: string | null
           quantity?: number
+          size?: string | null
         }
         Relationships: [
           {
@@ -86,7 +101,9 @@ export type Database = {
           comment: string | null
           created_at: string
           customer_name: string
+          delivery_date: string | null
           delivery_method: string
+          delivery_time: string | null
           email: string | null
           id: string
           phone: string
@@ -98,7 +115,9 @@ export type Database = {
           comment?: string | null
           created_at?: string
           customer_name: string
+          delivery_date?: string | null
           delivery_method?: string
+          delivery_time?: string | null
           email?: string | null
           id?: string
           phone: string
@@ -110,7 +129,9 @@ export type Database = {
           comment?: string | null
           created_at?: string
           customer_name?: string
+          delivery_date?: string | null
           delivery_method?: string
+          delivery_time?: string | null
           email?: string | null
           id?: string
           phone?: string
