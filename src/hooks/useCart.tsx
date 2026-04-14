@@ -6,6 +6,9 @@ export interface CartItem {
   price: number;
   image_url: string | null;
   quantity: number;
+  color?: string;
+  size?: string;
+  material?: string;
 }
 
 interface CartContextType {
@@ -20,6 +23,10 @@ interface CartContextType {
 
 const CartContext = createContext<CartContextType>({} as CartContextType);
 
+function cartItemKey(item: { id: string; color?: string; size?: string; material?: string }) {
+  return `${item.id}_${item.color || ""}_${item.size || ""}_${item.material || ""}`;
+}
+
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>(() => {
     const saved = localStorage.getItem("cart");
@@ -32,19 +39,20 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const addItem = (product: Omit<CartItem, "quantity">) => {
     setItems((prev) => {
-      const existing = prev.find((i) => i.id === product.id);
+      const key = cartItemKey(product);
+      const existing = prev.find((i) => cartItemKey(i) === key);
       if (existing) {
-        return prev.map((i) => i.id === product.id ? { ...i, quantity: i.quantity + 1 } : i);
+        return prev.map((i) => cartItemKey(i) === key ? { ...i, quantity: i.quantity + 1 } : i);
       }
       return [...prev, { ...product, quantity: 1 }];
     });
   };
 
-  const removeItem = (id: string) => setItems((prev) => prev.filter((i) => i.id !== id));
+  const removeItem = (id: string) => setItems((prev) => prev.filter((i) => cartItemKey(i) !== id));
 
   const updateQuantity = (id: string, quantity: number) => {
     if (quantity <= 0) return removeItem(id);
-    setItems((prev) => prev.map((i) => i.id === id ? { ...i, quantity } : i));
+    setItems((prev) => prev.map((i) => cartItemKey(i) === id ? { ...i, quantity } : i));
   };
 
   const clearCart = () => setItems([]);
@@ -60,3 +68,4 @@ export function CartProvider({ children }: { children: ReactNode }) {
 }
 
 export const useCart = () => useContext(CartContext);
+export { cartItemKey };
