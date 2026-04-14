@@ -30,7 +30,7 @@ function ProductCard({ p }: { p: any }) {
   };
 
   return (
-    <div className="group">
+    <div className="group flex flex-col h-full">
       <Link to={`/product/${p.id}`}>
         <div className="aspect-[3/4] rounded-xl overflow-hidden bg-muted mb-3">
           {p.image_url ? (
@@ -47,7 +47,7 @@ function ProductCard({ p }: { p: any }) {
         <h3 className="font-medium text-sm mt-0.5">{p.name}</h3>
         <p className="font-semibold text-sm mt-1">{Number(p.price).toLocaleString()} ₽</p>
       </Link>
-      <div className="mt-3 flex items-center gap-2">
+      <div className="mt-auto pt-3 flex items-center gap-2">
         <div className="flex items-center border rounded-full">
           <button
             onClick={() => setQty((q) => Math.max(1, q - 1))}
