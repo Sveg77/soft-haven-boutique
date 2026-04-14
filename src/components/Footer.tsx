@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { Clock, Truck } from "lucide-react";
 
 export default function Footer() {
   return (
@@ -21,10 +22,18 @@ export default function Footer() {
           </div>
           <div>
             <h4 className="font-semibold mb-3 text-sm">Контакты</h4>
-            <div className="text-sm text-muted-foreground space-y-1">
+            <div className="text-sm text-muted-foreground space-y-2">
               <p>г. Москва</p>
               <p>+7 (999) 123-45-67</p>
               <p>info@uyutnydom.ru</p>
+              <div className="border-t pt-2 mt-2 space-y-1">
+                <p className="flex items-center gap-2">
+                  <Clock className="h-3.5 w-3.5 flex-shrink-0" /> Магазин: 10:00–20:00
+                </p>
+                <p className="flex items-center gap-2">
+                  <Truck className="h-3.5 w-3.5 flex-shrink-0" /> Доставка: 10:00–18:00
+                </p>
+              </div>
             </div>
           </div>
         </div>

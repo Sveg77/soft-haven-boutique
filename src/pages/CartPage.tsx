@@ -1,4 +1,4 @@
-import { useCart } from "@/hooks/useCart";
+import { useCart, cartItemKey } from "@/hooks/useCart";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -31,33 +31,41 @@ export default function CartPage() {
         ) : (
           <div className="grid lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2 space-y-4">
-              {items.map((item) => (
-                <div key={item.id} className="flex gap-4 p-4 border rounded-xl">
-                  <div className="w-20 h-20 rounded-lg overflow-hidden bg-muted flex-shrink-0">
-                    {item.image_url ? (
-                      <img src={item.image_url} alt={item.name} className="w-full h-full object-cover" />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-muted-foreground text-xs">Фото</div>
-                    )}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-medium text-sm truncate">{item.name}</h3>
-                    <p className="text-sm font-semibold mt-1">{item.price.toLocaleString()} ₽</p>
-                    <div className="flex items-center gap-2 mt-2">
-                      <Button variant="outline" size="icon" className="h-7 w-7" onClick={() => updateQuantity(item.id, item.quantity - 1)}>
-                        <Minus className="h-3 w-3" />
-                      </Button>
-                      <span className="text-sm w-6 text-center">{item.quantity}</span>
-                      <Button variant="outline" size="icon" className="h-7 w-7" onClick={() => updateQuantity(item.id, item.quantity + 1)}>
-                        <Plus className="h-3 w-3" />
-                      </Button>
-                      <Button variant="ghost" size="icon" className="h-7 w-7 ml-auto" onClick={() => removeItem(item.id)}>
-                        <Trash2 className="h-3 w-3 text-destructive" />
-                      </Button>
+              {items.map((item) => {
+                const key = cartItemKey(item);
+                return (
+                  <div key={key} className="flex gap-4 p-4 border rounded-xl">
+                    <div className="w-20 h-20 rounded-lg overflow-hidden bg-muted flex-shrink-0">
+                      {item.image_url ? (
+                        <img src={item.image_url} alt={item.name} className="w-full h-full object-cover" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-muted-foreground text-xs">Фото</div>
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-medium text-sm truncate">{item.name}</h3>
+                      {(item.color || item.size || item.material) && (
+                        <p className="text-xs text-muted-foreground mt-0.5">
+                          {[item.color, item.size, item.material].filter(Boolean).join(" · ")}
+                        </p>
+                      )}
+                      <p className="text-sm font-semibold mt-1">{item.price.toLocaleString()} ₽</p>
+                      <div className="flex items-center gap-2 mt-2">
+                        <Button variant="outline" size="icon" className="h-7 w-7" onClick={() => updateQuantity(key, item.quantity - 1)}>
+                          <Minus className="h-3 w-3" />
+                        </Button>
+                        <span className="text-sm w-6 text-center">{item.quantity}</span>
+                        <Button variant="outline" size="icon" className="h-7 w-7" onClick={() => updateQuantity(key, item.quantity + 1)}>
+                          <Plus className="h-3 w-3" />
+                        </Button>
+                        <Button variant="ghost" size="icon" className="h-7 w-7 ml-auto" onClick={() => removeItem(key)}>
+                          <Trash2 className="h-3 w-3 text-destructive" />
+                        </Button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
             <div className="bg-card border rounded-xl p-6 h-fit space-y-4">
               <h3 className="font-semibold">Итого</h3>
