@@ -29,13 +29,28 @@ serve(async (req) => {
     // Load products catalog
     const { data: products } = await supabase
       .from("products")
-      .select("id, name, price, description, characteristics, in_stock, category_id, categories(name)")
+      .select("id, name, price, description, characteristics, in_stock, category_id, categories(name), image_url, images")
       .eq("in_stock", true)
       .limit(200);
 
-    const catalogText = (products || []).map((p: any) =>
-      `- ${p.name} | ${p.price}₽ | ${p.description || ""} | ${JSON.stringify(p.characteristics || {})} | Категория: ${p.categories?.name || "—"}`
-    ).join("\n");
+    const storageBase = `${supabaseUrl}/storage/v1/object/public/product-images/`;
+
+    const getImageUrl = (p: any): string => {
+      if (Array.isArray(p.images) && p.images.length > 0) {
+        const img = p.images[0];
+        return img.startsWith("http") ? img : `${storageBase}${img}`;
+      }
+      if (p.image_url) {
+        return p.image_url.startsWith("http") ? p.image_url : `${storageBase}${p.image_url}`;
+      }
+      return "";
+    };
+
+    const catalogText = (products || []).map((p: any) => {
+      const imgUrl = getImageUrl(p);
+      const imgPart = imgUrl ? ` | Фото: ${imgUrl}` : "";
+      return `- ${p.name} | ${p.price}₽ | ${p.description || ""} | ${JSON.stringify(p.characteristics || {})} | Категория: ${p.categories?.name || "—"}${imgPart}`;
+    }).join("\n");
 
     // Load conversation history
     const { data: history } = await supabase
@@ -58,9 +73,10 @@ ${catalogText}
 Правила:
 1. Отвечай на русском языке, дружелюбно и кратко.
 2. Рекомендуй товары из каталога. Называй точные цены.
-3. Когда покупатель согласен с заказом — вызови функцию place_order с массивом товаров.
-4. Если не можешь помочь или покупатель просит живого оператора — вызови request_operator.
-5. Не выдумывай товары, которых нет в каталоге.`;
+3. Когда рекомендуешь товар — ОБЯЗАТЕЛЬНО вставляй фото товара в формате markdown: ![название](ссылка). Используй ссылку из поля "Фото" каталога.
+4. Когда покупатель согласен с заказом — вызови функцию place_order с массивом товаров.
+5. Если не можешь помочь или покупатель просит живого оператора — вызови request_operator.
+6. Не выдумывай товары, которых нет в каталоге.`;
 
     const tools = [
       {

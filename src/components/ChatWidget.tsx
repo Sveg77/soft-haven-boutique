@@ -204,8 +204,14 @@ export default function ChatWidget() {
                       {m.role === "operator" && (
                         <span className="text-[10px] font-semibold block mb-0.5 opacity-70">Оператор</span>
                       )}
-                      <div className="prose prose-sm max-w-none [&_p]:m-0">
-                        <ReactMarkdown>{m.content}</ReactMarkdown>
+                      <div className="prose prose-sm max-w-none [&_p]:m-0 [&_img]:rounded-lg [&_img]:max-w-full [&_img]:my-1">
+                        <ReactMarkdown
+                          components={{
+                            img: ({ src, alt }) => (
+                              <img src={src} alt={alt || ""} className="rounded-lg max-w-[200px] w-full h-auto" loading="lazy" />
+                            ),
+                          }}
+                        >{m.content}</ReactMarkdown>
                       </div>
                     </div>
                   </div>
