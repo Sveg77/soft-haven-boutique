@@ -127,7 +127,7 @@ export default function AdminOrders() {
       )}
 
       <Dialog open={!!selectedOrder} onOpenChange={() => setSelectedOrder(null)}>
-        <DialogContent className="max-w-lg">
+        <DialogContent className="max-w-lg max-h-[80vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Детали заявки</DialogTitle>
           </DialogHeader>
