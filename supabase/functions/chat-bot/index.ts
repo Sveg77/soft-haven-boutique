@@ -195,6 +195,24 @@ ${catalogText}
               line_total: i.price * i.quantity,
             }));
             await supabase.from("order_items").insert(orderItems);
+
+            // Telegram notification (fire-and-forget)
+            fetch(`${supabaseUrl}/functions/v1/notify-telegram`, {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${serviceKey}`,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                order_id: order.id,
+                customer_name: session?.customer_name || "Чат-клиент",
+                phone: session?.phone || "",
+                total,
+                items: args.items,
+                delivery_method: args.delivery_method || "pickup",
+                comment: args.comment || "Заказ через чат-бота",
+              }),
+            }).catch((err) => console.error("Telegram notify error:", err));
           }
 
           const confirmMsg = `✅ Заказ оформлен! Номер: ${order?.id?.slice(0, 8)}. Сумма: ${total}₽. Мы свяжемся с вами для подтверждения.`;
