@@ -5,7 +5,7 @@ import { useCart } from "@/hooks/useCart";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import { ShoppingBag, Check, Clock, Truck, ChevronLeft, ChevronRight } from "lucide-react";
+import { ShoppingBag, Check, ChevronLeft, ChevronRight } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
