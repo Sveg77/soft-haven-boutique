@@ -5,7 +5,7 @@ import { useCart } from "@/hooks/useCart";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import { ShoppingBag, Check, Clock, Truck, ChevronLeft, ChevronRight } from "lucide-react";
+import { ShoppingBag, Check, ChevronLeft, ChevronRight } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -232,14 +232,6 @@ export default function ProductPage() {
               ) : (
                 <span className="text-sm text-muted-foreground">Нет в наличии</span>
               )}
-            </div>
-            <div className="mt-4 space-y-1 border-t pt-4">
-              <p className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Clock className="h-4 w-4" /> Магазин: 10:00–20:00
-              </p>
-              <p className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Truck className="h-4 w-4" /> Доставка: 10:00–18:00
-              </p>
             </div>
           </div>
         </div>
