@@ -10,6 +10,7 @@ import AdminLayout from "@/components/AdminLayout";
 
 import Index from "./pages/Index";
 import Catalog from "./pages/Catalog";
+import CategoryPage from "./pages/CategoryPage";
 import ProductPage from "./pages/ProductPage";
 import CartPage from "./pages/CartPage";
 import CheckoutPage from "./pages/CheckoutPage";
