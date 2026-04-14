@@ -116,6 +116,9 @@ export default function ChatWidget() {
     setAccepted(false);
   };
 
+  // Hide on admin pages
+  if (location.pathname.startsWith("/admin")) return null;
+
   return (
     <>
       {/* Floating button */}
