@@ -1,12 +1,14 @@
 import { Link } from "react-router-dom";
-import { ShoppingBag, Menu, X } from "lucide-react";
+import { ShoppingBag, Menu, X, Sun, Moon } from "lucide-react";
 import { useCart } from "@/hooks/useCart";
+import { useTheme } from "@/hooks/useTheme";
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import cozyHomeLogo from "@/assets/cozy-home-logo.png";
 
 export default function Header() {
   const { count } = useCart();
+  const { theme, toggle } = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
@@ -30,6 +32,13 @@ export default function Header() {
         </nav>
 
         <div className="flex items-center gap-3">
+          <button
+            onClick={toggle}
+            className="p-2 hover:bg-accent rounded-lg transition-colors"
+            aria-label="Переключить тему"
+          >
+            {theme === "light" ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
+          </button>
           <Link to="/cart" className="relative p-2 hover:bg-accent rounded-lg transition-colors">
             <ShoppingBag className="h-5 w-5" />
             {count > 0 && (
