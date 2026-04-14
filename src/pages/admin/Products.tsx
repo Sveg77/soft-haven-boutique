@@ -11,6 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "@/hooks/use-toast";
+import ProductImageUpload from "@/components/admin/ProductImageUpload";
 
 interface ProductForm {
   name: string;
@@ -191,10 +192,10 @@ export default function AdminProducts() {
                 </SelectContent>
               </Select>
             </div>
-            <div className="space-y-2">
-              <Label>URL изображения</Label>
-              <Input value={form.image_url} onChange={(e) => setForm({ ...form, image_url: e.target.value })} />
-            </div>
+            <ProductImageUpload
+              imageUrl={form.image_url}
+              onImageChange={(url) => setForm({ ...form, image_url: url })}
+            />
             <div className="space-y-2">
               <Label>Характеристики (JSON)</Label>
               <Textarea
