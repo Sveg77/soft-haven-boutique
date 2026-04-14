@@ -54,11 +54,11 @@ export default function Index() {
         {categories.length > 0 && (
           <section className="py-16 container mx-auto px-4">
             <h2 className="font-serif text-2xl md:text-3xl font-semibold text-center mb-10">Наши коллекции</h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
               {categories.map((cat) => (
                 <Link
                   key={cat.id}
-                  to={`/catalog?category=${cat.slug}`}
+                  to={`/catalog/${cat.slug}`}
                   className="group relative aspect-square rounded-2xl overflow-hidden bg-muted"
                 >
                   {cat.image_url && (
