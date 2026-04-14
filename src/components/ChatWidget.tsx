@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { supabase } from "@/integrations/supabase/client";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 
 type Msg = { role: "user" | "assistant" | "operator"; content: string };
@@ -12,6 +12,7 @@ type Msg = { role: "user" | "assistant" | "operator"; content: string };
 const STORAGE_KEY = "chat_session_id";
 
 export default function ChatWidget() {
+  const location = useLocation();
   const [open, setOpen] = useState(false);
   const [sessionId, setSessionId] = useState<string | null>(() => localStorage.getItem(STORAGE_KEY));
   const [messages, setMessages] = useState<Msg[]>([]);
