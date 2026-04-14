@@ -102,7 +102,10 @@ export default function CheckoutPage() {
 
     setLoading(true);
 
+    const orderId = crypto.randomUUID();
+
     const orderPayload: any = {
+      id: orderId,
       ...form,
       total,
       delivery_date: form.delivery_method === "delivery" && deliveryDate
@@ -113,11 +116,9 @@ export default function CheckoutPage() {
         : null,
     };
 
-    const { data: order, error: orderError } = await supabase
+    const { error: orderError } = await supabase
       .from("orders")
-      .insert(orderPayload)
-      .select("id")
-      .single();
+      .insert(orderPayload);
 
     if (orderError) {
       toast({ title: "Ошибка", description: orderError.message, variant: "destructive" });
@@ -126,7 +127,7 @@ export default function CheckoutPage() {
     }
 
     const orderItems = items.map((i) => ({
-      order_id: order.id,
+      order_id: orderId,
       product_id: i.id,
       product_name: i.name,
       color: i.color || null,
@@ -148,7 +149,7 @@ export default function CheckoutPage() {
     // Fire-and-forget Telegram notification
     supabase.functions.invoke("notify-telegram", {
       body: {
-        order_id: order.id,
+        order_id: orderId,
         customer_name: form.customer_name,
         phone: form.phone,
         total,
