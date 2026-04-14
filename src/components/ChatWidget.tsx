@@ -227,18 +227,27 @@ export default function ChatWidget() {
               </div>
 
               {/* Input */}
-              <form onSubmit={handleSubmit} className="border-t p-2 flex gap-2">
-                <Input
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  placeholder="Введите сообщение..."
-                  className="flex-1 text-sm"
+              <div className="border-t p-2 space-y-1">
+                <form onSubmit={handleSubmit} className="flex gap-2">
+                  <Input
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    placeholder="Введите сообщение..."
+                    className="flex-1 text-sm"
+                    disabled={loading}
+                  />
+                  <Button type="submit" size="icon" disabled={!input.trim() || loading}>
+                    <Send className="h-4 w-4" />
+                  </Button>
+                </form>
+                <button
+                  onClick={() => { if (!loading) sendMessage("Позови оператора"); }}
                   disabled={loading}
-                />
-                <Button type="submit" size="icon" disabled={!input.trim() || loading}>
-                  <Send className="h-4 w-4" />
-                </Button>
-              </form>
+                  className="w-full text-xs text-muted-foreground hover:text-primary transition-colors py-1 disabled:opacity-50"
+                >
+                  🔔 Позвать оператора
+                </button>
+              </div>
             </>
           )}
         </div>
