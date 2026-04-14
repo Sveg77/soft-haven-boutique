@@ -18,7 +18,7 @@ export default function Header() {
           <img
             src={cozyHomeLogo}
             alt="Уютный Дом"
-            className="h-9 w-9 shrink-0"
+            className="h-9 w-9 shrink-0 dark:brightness-[10] dark:contrast-[0.8]"
             width={36}
             height={36}
           />
