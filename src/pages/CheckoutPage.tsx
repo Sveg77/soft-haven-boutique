@@ -102,7 +102,10 @@ export default function CheckoutPage() {
 
     setLoading(true);
 
+    const orderId = crypto.randomUUID();
+
     const orderPayload: any = {
+      id: orderId,
       ...form,
       total,
       delivery_date: form.delivery_method === "delivery" && deliveryDate
@@ -113,11 +116,9 @@ export default function CheckoutPage() {
         : null,
     };
 
-    const { data: order, error: orderError } = await supabase
+    const { error: orderError } = await supabase
       .from("orders")
-      .insert(orderPayload)
-      .select("id")
-      .single();
+      .insert(orderPayload);
 
     if (orderError) {
       toast({ title: "Ошибка", description: orderError.message, variant: "destructive" });
