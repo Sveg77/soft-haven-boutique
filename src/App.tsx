@@ -24,7 +24,9 @@ import AdminDashboard from "./pages/admin/Dashboard";
 import AdminOrders from "./pages/admin/Orders";
 import AdminProducts from "./pages/admin/Products";
 import AdminCategories from "./pages/admin/Categories";
+import AdminChats from "./pages/admin/Chats";
 import NotFound from "./pages/NotFound";
+import ChatWidget from "./components/ChatWidget";
 
 const queryClient = new QueryClient();
 
@@ -54,9 +56,11 @@ const App = () => (
                 <Route path="orders" element={<AdminOrders />} />
                 <Route path="products" element={<AdminProducts />} />
                 <Route path="categories" element={<AdminCategories />} />
+                <Route path="chats" element={<AdminChats />} />
               </Route>
               <Route path="*" element={<NotFound />} />
             </Routes>
+            <ChatWidget />
           </BrowserRouter>
         </TooltipProvider>
         </CartProvider>

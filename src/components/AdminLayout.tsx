@@ -1,6 +1,6 @@
 import { NavLink, Outlet } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
-import { Package, ShoppingBag, FolderOpen, LogOut, LayoutDashboard } from "lucide-react";
+import { Package, ShoppingBag, FolderOpen, LogOut, LayoutDashboard, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function AdminLayout() {
@@ -27,6 +27,9 @@ export default function AdminLayout() {
           </NavLink>
           <NavLink to="/admin/categories" className={linkClass}>
             <FolderOpen className="h-4 w-4" /> Категории
+          </NavLink>
+          <NavLink to="/admin/chats" className={linkClass}>
+            <MessageSquare className="h-4 w-4" /> Чаты
           </NavLink>
         </nav>
         <div className="mt-auto">
