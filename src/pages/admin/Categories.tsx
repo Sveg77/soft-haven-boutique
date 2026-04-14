@@ -8,6 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
+import ProductImageUpload from "@/components/admin/ProductImageUpload";
 
 export default function AdminCategories() {
   const [editId, setEditId] = useState<string | null>(null);
@@ -75,6 +76,7 @@ export default function AdminCategories() {
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead>Фото</TableHead>
               <TableHead>Название</TableHead>
               <TableHead>Slug</TableHead>
               <TableHead>Порядок</TableHead>
@@ -84,13 +86,22 @@ export default function AdminCategories() {
           <TableBody>
             {categories.map((c) => (
               <TableRow key={c.id}>
+                <TableCell>
+                  {c.image_url ? (
+                    <img src={c.image_url} alt={c.name} className="w-12 h-12 object-cover rounded" />
+                  ) : (
+                    <div className="w-12 h-12 bg-muted rounded" />
+                  )}
+                </TableCell>
                 <TableCell className="font-medium">{c.name}</TableCell>
                 <TableCell>{c.slug}</TableCell>
                 <TableCell>{c.sort_order}</TableCell>
                 <TableCell>
                   <div className="flex gap-1">
                     <Button variant="ghost" size="icon" onClick={() => openEdit(c)}><Pencil className="h-4 w-4" /></Button>
-                    <Button variant="ghost" size="icon" onClick={() => deleteMutation.mutate(c.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
+                    <Button variant="ghost" size="icon" onClick={() => {
+                      if (confirm("Удалить категорию?")) deleteMutation.mutate(c.id);
+                    }}><Trash2 className="h-4 w-4 text-destructive" /></Button>
                   </div>
                 </TableCell>
               </TableRow>
@@ -100,7 +111,7 @@ export default function AdminCategories() {
       )}
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent>
+        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>{editId ? "Редактировать категорию" : "Новая категория"}</DialogTitle>
           </DialogHeader>
@@ -113,10 +124,10 @@ export default function AdminCategories() {
               <Label>Slug (URL)</Label>
               <Input value={slug} onChange={(e) => setSlug(e.target.value)} required placeholder="postelnoe-belie" />
             </div>
-            <div className="space-y-2">
-              <Label>URL изображения</Label>
-              <Input value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} />
-            </div>
+            <ProductImageUpload
+              imageUrl={imageUrl}
+              onImageChange={setImageUrl}
+            />
             <div className="space-y-2">
               <Label>Порядок сортировки</Label>
               <Input type="number" value={sortOrder} onChange={(e) => setSortOrder(e.target.value)} />
