@@ -127,7 +127,7 @@ export default function CheckoutPage() {
     }
 
     const orderItems = items.map((i) => ({
-      order_id: order.id,
+      order_id: orderId,
       product_id: i.id,
       product_name: i.name,
       color: i.color || null,
@@ -149,7 +149,7 @@ export default function CheckoutPage() {
     // Fire-and-forget Telegram notification
     supabase.functions.invoke("notify-telegram", {
       body: {
-        order_id: order.id,
+        order_id: orderId,
         customer_name: form.customer_name,
         phone: form.phone,
         total,
