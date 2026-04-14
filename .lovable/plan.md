@@ -1,54 +1,49 @@
 
 
-## План: Supabase + защищённая админка
+## План: Supabase + защищённая админка для «Уютный Дом»
 
-### 1. Создание таблиц в Supabase (миграции)
+### Шаг 1. Подключить Supabase (Lovable Cloud)
+Включить управляемую базу данных Supabase через Lovable Cloud (выбор региона).
 
-**Таблица `categories`:**
-- `id` (uuid, PK), `name` (text), `slug` (text, unique), `image_url` (text), `sort_order` (int), `created_at`
+### Шаг 2. Создать миграции для таблиц
 
-**Таблица `products`:**
-- `id` (uuid, PK), `name` (text), `description` (text), `price` (numeric), `category_id` (FK → categories), `image_url` (text), `images` (text[]), `characteristics` (jsonb — состав, размер, цвет), `in_stock` (boolean), `created_at`
+**categories** — id, name, slug, image_url, sort_order, created_at
+**products** — id, name, description, price, category_id (FK), image_url, images[], characteristics (jsonb), in_stock, created_at
+**orders** — id, customer_name, phone, email, address, delivery_method, comment, status, total, created_at
+**order_items** — id, order_id (FK), product_id (FK), quantity, price
 
-**Таблица `orders`:**
-- `id` (uuid, PK), `customer_name` (text), `phone` (text), `email` (text), `address` (text), `delivery_method` (text), `comment` (text), `status` (text — новая/в работе/выполнена), `total` (numeric), `created_at`
+RLS-политики:
+- categories, products: SELECT для anon+authenticated; INSERT/UPDATE/DELETE только authenticated
+- orders, order_items: INSERT для anon (оформление заявки); SELECT/UPDATE только authenticated (админ)
 
-**Таблица `order_items`:**
-- `id` (uuid, PK), `order_id` (FK → orders), `product_id` (FK → products), `quantity` (int), `price` (numeric)
+### Шаг 3. Supabase client + типы
+Создать `src/integrations/supabase/client.ts` и типы таблиц.
 
-**RLS-политики:**
-- `categories`, `products` — SELECT для всех (anon), INSERT/UPDATE/DELETE только для authenticated
-- `orders`, `order_items` — INSERT для всех (anon может оформить заявку), SELECT/UPDATE только для authenticated (админ)
+### Шаг 4. Админ-авторизация
+- `/admin/login` — форма входа по email+пароль через `supabase.auth.signInWithPassword()`
+- Компонент `AdminRoute` — проверка сессии, редирект на логин если не авторизован
+- Профили пользователей не нужны — используется только встроенный `auth.users`
 
-### 2. Админ-авторизация
+### Шаг 5. Админ-панель
+- Layout с боковой навигацией (Заявки / Товары / Категории / Выйти)
+- `/admin/orders` — таблица заявок, фильтр по статусу, смена статуса
+- `/admin/products` — список, добавление, редактирование, удаление товаров
+- `/admin/categories` — CRUD категорий
 
-Создать пользователя-админа через Supabase Auth. Страница `/admin/login` — вход по email + пароль через `supabase.auth.signInWithPassword()`. Все `/admin/*` маршруты защищены проверкой авторизации — если не залогинен, редирект на логин.
+### Шаг 6. Публичный фронтенд (подключение к БД)
+- Каталог и карточки товаров загружают данные из Supabase
+- Корзина в localStorage
+- Оформление заявки пишет в orders + order_items
+- Главная, каталог, карточка товара, корзина, чекаут, информационные страницы
 
-Без регистрации новых пользователей — только вход. Администратор создаётся вручную через Supabase dashboard или через начальный seed.
+### Шаг 7. Seed-данные
+Добавить несколько тестовых категорий и товаров для демонстрации.
 
-### 3. Админ-панель (страницы)
+---
 
-- `/admin/login` — форма входа
-- `/admin/orders` — список заявок, фильтр по статусу, просмотр деталей, смена статуса
-- `/admin/products` — список товаров, кнопки добавить/редактировать/удалить
-- `/admin/products/new` и `/admin/products/:id/edit` — форма товара (название, описание, цена, категория, URL фото, характеристики, наличие)
-- `/admin/categories` — управление категориями
-
-Простой layout с боковой навигацией: Заявки / Товары / Категории / Выйти.
-
-### 4. Интеграция фронтенда с Supabase
-
-- Supabase client (`src/integrations/supabase/client.ts`)
-- React Query хуки для товаров, категорий, заявок
-- Корзина — localStorage, при оформлении заявки данные пишутся в `orders` + `order_items` через Supabase
-- Каталог и карточки товаров загружают данные из БД
-
-### 5. Порядок реализации
-
-1. Подключить Lovable Cloud Supabase, создать миграции для таблиц
-2. Настроить RLS-политики
-3. Создать Supabase client и типы
-4. Реализовать админ-логин и защищённые маршруты
-5. Реализовать страницы админки (заявки, товары, категории)
-6. Подключить публичный фронтенд к БД (каталог, карточка товара, оформление заявки)
+### Технические детали
+- React Query хуки для всех CRUD-операций
+- Warm/romantic дизайн: кремовый фон (#FDF6F0), пыльная роза (#D4A0A0), бежевый (#C9B99A)
+- Адаптивная верстка
+- Админ создаётся вручную через Supabase Auth dashboard после подключения
 
