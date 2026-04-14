@@ -192,10 +192,10 @@ export default function AdminProducts() {
                 </SelectContent>
               </Select>
             </div>
-            <div className="space-y-2">
-              <Label>URL изображения</Label>
-              <Input value={form.image_url} onChange={(e) => setForm({ ...form, image_url: e.target.value })} />
-            </div>
+            <ProductImageUpload
+              imageUrl={form.image_url}
+              onImageChange={(url) => setForm({ ...form, image_url: url })}
+            />
             <div className="space-y-2">
               <Label>Характеристики (JSON)</Label>
               <Textarea
