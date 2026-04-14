@@ -9,6 +9,7 @@ import { ShoppingBag, Check, ChevronLeft, ChevronRight } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { getProductImages } from "@/lib/productImageOverrides";
 
 export default function ProductPage() {
   const { id } = useParams();
@@ -50,9 +51,7 @@ export default function ProductPage() {
   const colors: string[] = Array.isArray(chars["Цвет"]) ? chars["Цвет"] : [];
   const sizes: string[] = Array.isArray(chars["Размер"]) ? chars["Размер"] : [];
   const materials: string[] = Array.isArray(chars["Материал"]) ? chars["Материал"] : [];
-  const productImages: string[] = Array.isArray(product.images) && product.images.length > 0
-    ? product.images as string[]
-    : product.image_url ? [product.image_url] : [];
+  const productImages: string[] = getProductImages(product);
 
   const currentImage = productImages[selectedColorIdx] || productImages[0] || product.image_url;
   const currentColor = colors[selectedColorIdx] || colors[0] || "";

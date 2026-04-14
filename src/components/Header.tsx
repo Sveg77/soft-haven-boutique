@@ -3,6 +3,7 @@ import { ShoppingBag, Menu, X } from "lucide-react";
 import { useCart } from "@/hooks/useCart";
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
+import cozyHomeLogo from "@/assets/cozy-home-logo.png";
 
 export default function Header() {
   const { count } = useCart();
@@ -11,8 +12,15 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-50 bg-[hsl(var(--background))]/95 backdrop-blur border-b">
       <div className="container mx-auto px-4 flex items-center justify-between h-16">
-        <Link to="/" className="text-xl font-serif font-semibold tracking-wide text-foreground">
-          Уютный Дом
+        <Link to="/" className="flex items-center gap-3 text-foreground">
+          <img
+            src={cozyHomeLogo}
+            alt="Уютный Дом"
+            className="h-9 w-9 shrink-0"
+            width={36}
+            height={36}
+          />
+          <span className="text-xl font-serif font-semibold tracking-wide">Уютный Дом</span>
         </Link>
 
         <nav className="hidden md:flex items-center gap-6 text-sm">
