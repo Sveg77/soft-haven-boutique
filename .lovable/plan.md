@@ -1,49 +1,20 @@
 
 
-## План: Supabase + защищённая админка для «Уютный Дом»
+## Создание админ-пользователя
 
-### Шаг 1. Подключить Supabase (Lovable Cloud)
-Включить управляемую базу данных Supabase через Lovable Cloud (выбор региона).
+Создам пользователя `admin@admin.com` с паролем через backend-функцию, а также включу автоподтверждение email (чтобы не нужно было подтверждать почту для входа).
 
-### Шаг 2. Создать миграции для таблиц
+### Шаги
 
-**categories** — id, name, slug, image_url, sort_order, created_at
-**products** — id, name, description, price, category_id (FK), image_url, images[], characteristics (jsonb), in_stock, created_at
-**orders** — id, customer_name, phone, email, address, delivery_method, comment, status, total, created_at
-**order_items** — id, order_id (FK), product_id (FK), quantity, price
+1. **Включить автоподтверждение email** через настройки аутентификации — чтобы созданный пользователь мог сразу войти без верификации письма.
 
-RLS-политики:
-- categories, products: SELECT для anon+authenticated; INSERT/UPDATE/DELETE только authenticated
-- orders, order_items: INSERT для anon (оформление заявки); SELECT/UPDATE только authenticated (админ)
+2. **Создать Edge Function `create-admin`** — одноразовая функция, которая вызовет Supabase Admin API для создания пользователя:
+   - Email: `admin@admin.com`
+   - Пароль: `admin123456` (можно сменить после первого входа)
+   - Email подтверждён автоматически
 
-### Шаг 3. Supabase client + типы
-Создать `src/integrations/supabase/client.ts` и типы таблиц.
+3. **Вызвать функцию** для создания пользователя, затем удалить её (она нужна только один раз).
 
-### Шаг 4. Админ-авторизация
-- `/admin/login` — форма входа по email+пароль через `supabase.auth.signInWithPassword()`
-- Компонент `AdminRoute` — проверка сессии, редирект на логин если не авторизован
-- Профили пользователей не нужны — используется только встроенный `auth.users`
-
-### Шаг 5. Админ-панель
-- Layout с боковой навигацией (Заявки / Товары / Категории / Выйти)
-- `/admin/orders` — таблица заявок, фильтр по статусу, смена статуса
-- `/admin/products` — список, добавление, редактирование, удаление товаров
-- `/admin/categories` — CRUD категорий
-
-### Шаг 6. Публичный фронтенд (подключение к БД)
-- Каталог и карточки товаров загружают данные из Supabase
-- Корзина в localStorage
-- Оформление заявки пишет в orders + order_items
-- Главная, каталог, карточка товара, корзина, чекаут, информационные страницы
-
-### Шаг 7. Seed-данные
-Добавить несколько тестовых категорий и товаров для демонстрации.
-
----
-
-### Технические детали
-- React Query хуки для всех CRUD-операций
-- Warm/romantic дизайн: кремовый фон (#FDF6F0), пыльная роза (#D4A0A0), бежевый (#C9B99A)
-- Адаптивная верстка
-- Админ создаётся вручную через Supabase Auth dashboard после подключения
+### Результат
+После выполнения вы сможете войти в админку по адресу `/admin/login` с логином `admin@admin.com` и паролем `admin123456`.
 
