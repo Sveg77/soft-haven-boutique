@@ -1,6 +1,6 @@
 import { NavLink, Outlet } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
-import { Package, ShoppingBag, FolderOpen, LogOut } from "lucide-react";
+import { Package, ShoppingBag, FolderOpen, LogOut, LayoutDashboard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function AdminLayout() {
@@ -16,6 +16,9 @@ export default function AdminLayout() {
       <aside className="w-60 border-r bg-card p-4 flex flex-col gap-2">
         <h2 className="text-lg font-semibold mb-4 px-4">Админ-панель</h2>
         <nav className="flex flex-col gap-1">
+          <NavLink to="/admin/dashboard" className={linkClass}>
+            <LayoutDashboard className="h-4 w-4" /> Дашборд
+          </NavLink>
           <NavLink to="/admin/orders" className={linkClass}>
             <ShoppingBag className="h-4 w-4" /> Заявки
           </NavLink>
