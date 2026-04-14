@@ -145,6 +145,23 @@ export default function CheckoutPage() {
       return;
     }
 
+    // Fire-and-forget Telegram notification
+    supabase.functions.invoke("notify-telegram", {
+      body: {
+        order_id: order.id,
+        customer_name: form.customer_name,
+        phone: form.phone,
+        total,
+        items: items.map((i) => ({
+          product_name: i.name,
+          price: i.price,
+          quantity: i.quantity,
+        })),
+        delivery_method: form.delivery_method,
+        comment: form.comment,
+      },
+    }).catch((err) => console.error("Telegram notify error:", err));
+
     clearCart();
     toast({ title: "Заявка отправлена!", description: "Мы свяжемся с вами в ближайшее время" });
     navigate("/");
