@@ -41,7 +41,7 @@ export default function AdminOrders() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("order_items")
-        .select("*, products(name)")
+        .select("*")
         .eq("order_id", selectedOrder!);
       if (error) throw error;
       return data;
@@ -136,19 +136,42 @@ export default function AdminOrders() {
               <p><strong>Клиент:</strong> {selected.customer_name}</p>
               <p><strong>Телефон:</strong> {selected.phone}</p>
               {selected.email && <p><strong>Email:</strong> {selected.email}</p>}
-              {selected.address && <p><strong>Адрес:</strong> {selected.address}</p>}
               <p><strong>Доставка:</strong> {selected.delivery_method === "pickup" ? "Самовывоз" : "Доставка"}</p>
+              {selected.address && <p><strong>Адрес:</strong> {selected.address}</p>}
+              {selected.delivery_date && (
+                <p><strong>Дата доставки:</strong> {format(new Date(selected.delivery_date + "T00:00:00"), "dd.MM.yyyy")}</p>
+              )}
+              {selected.delivery_time && (
+                <p><strong>Время доставки:</strong> {selected.delivery_time.slice(0, 5)}</p>
+              )}
               {selected.comment && <p><strong>Комментарий:</strong> {selected.comment}</p>}
               <p><strong>Сумма:</strong> {selected.total.toLocaleString()} ₽</p>
               <div>
-                <strong>Товары:</strong>
-                <ul className="mt-1 space-y-1">
-                  {orderItems.map((item: any) => (
-                    <li key={item.id}>
-                      {item.products?.name || "Товар удалён"} × {item.quantity} — {(item.price * item.quantity).toLocaleString()} ₽
-                    </li>
-                  ))}
-                </ul>
+                <strong>Состав заказа:</strong>
+                <Table className="mt-2">
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="text-xs">Наименование</TableHead>
+                      <TableHead className="text-xs">Цвет</TableHead>
+                      <TableHead className="text-xs">Размер</TableHead>
+                      <TableHead className="text-xs">Материал</TableHead>
+                      <TableHead className="text-xs text-right">Кол-во</TableHead>
+                      <TableHead className="text-xs text-right">Сумма</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {orderItems.map((item: any) => (
+                      <TableRow key={item.id}>
+                        <TableCell className="text-xs">{item.product_name || "—"}</TableCell>
+                        <TableCell className="text-xs">{item.color || "—"}</TableCell>
+                        <TableCell className="text-xs">{item.size || "—"}</TableCell>
+                        <TableCell className="text-xs">{item.material || "—"}</TableCell>
+                        <TableCell className="text-xs text-right">{item.quantity}</TableCell>
+                        <TableCell className="text-xs text-right">{Number(item.line_total || item.price * item.quantity).toLocaleString()} ₽</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
               </div>
             </div>
           )}
