@@ -104,8 +104,8 @@ export default function Index() {
             <div className="grid lg:grid-cols-2 gap-10 lg:gap-16">
               {/* Для кого */}
               <div>
-                <h2 className="font-serif text-2xl md:text-3xl font-semibold mb-3">Для кого наш текстиль</h2>
-                <p className="text-muted-foreground mb-8">Подходит каждому, кто ценит уют и качество</p>
+                <h2 className="font-serif text-2xl md:text-3xl font-semibold mb-3 text-center">Для кого наш текстиль</h2>
+                <p className="text-muted-foreground mb-8 text-center">Подходит каждому, кто ценит уют и качество</p>
                 <div className="space-y-4">
                   {[
                     { icon: Home, title: "Для вашего дома", text: "Создайте атмосферу тепла в каждой комнате — от спальни до кухни" },
@@ -128,8 +128,8 @@ export default function Index() {
 
               {/* Для каких случаев */}
               <div>
-                <h2 className="font-serif text-2xl md:text-3xl font-semibold mb-3">Для каких случаев</h2>
-                <p className="text-muted-foreground mb-8">Идеальное решение в любой момент жизни</p>
+                <h2 className="font-serif text-2xl md:text-3xl font-semibold mb-3 text-center">Для каких случаев</h2>
+                <p className="text-muted-foreground mb-8 text-center">Идеальное решение в любой момент жизни</p>
                 <div className="space-y-4">
                   {[
                     { icon: Home, title: "Обновление интерьера", text: "Свежие коллекции, чтобы преобразить дом без ремонта" },
