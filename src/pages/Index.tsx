@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Leaf, Truck, ShieldCheck, Heart, Sparkles, Headphones } from "lucide-react";
 
 export default function Index() {
   const { data: categories = [] } = useQuery({
@@ -71,6 +71,32 @@ export default function Index() {
             </div>
           </section>
         )}
+
+        {/* Benefits */}
+        <section className="py-16 container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="font-serif text-2xl md:text-3xl font-semibold mb-3">Почему выбирают нас</h2>
+            <p className="text-muted-foreground max-w-xl mx-auto">Мы заботимся о каждой детали, чтобы ваш дом стал ещё уютнее</p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[
+              { icon: Leaf, title: "Натуральные материалы", text: "Только проверенные ткани: хлопок, лён, бамбук — безопасно для всей семьи" },
+              { icon: Sparkles, title: "Премиальное качество", text: "Тщательный контроль на каждом этапе — от закупки до упаковки" },
+              { icon: Truck, title: "Быстрая доставка", text: "Доставим по Москве за 1 день, в регионы — от 2 дней" },
+              { icon: ShieldCheck, title: "Гарантия возврата", text: "14 дней на обмен или возврат, если товар не подошёл" },
+              { icon: Heart, title: "Авторские коллекции", text: "Уникальные дизайны, которые вы не найдёте в других магазинах" },
+              { icon: Headphones, title: "Поддержка 7 дней в неделю", text: "Поможем с выбором и ответим на любые вопросы" },
+            ].map((b, i) => (
+              <div key={i} className="group p-6 rounded-2xl border border-border/60 bg-card hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
+                  <b.icon className="h-6 w-6 text-primary" />
+                </div>
+                <h3 className="font-serif text-lg font-semibold mb-2">{b.title}</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">{b.text}</p>
+              </div>
+            ))}
+          </div>
+        </section>
 
         {/* Featured */}
         {featured.length > 0 && (
