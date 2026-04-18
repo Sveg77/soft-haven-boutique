@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Leaf, Truck, ShieldCheck, Heart, Sparkles, Headphones } from "lucide-react";
+import { ArrowRight, Leaf, Truck, ShieldCheck, Heart, Sparkles, Headphones, Home, Baby, Hotel, Gift, Sofa, CalendarHeart } from "lucide-react";
 
 export default function Index() {
   const { data: categories = [] } = useQuery({
@@ -95,6 +95,61 @@ export default function Index() {
                 <p className="text-sm text-muted-foreground leading-relaxed">{b.text}</p>
               </div>
             ))}
+          </div>
+        </section>
+
+        {/* For whom & occasions */}
+        <section className="py-16 bg-accent/30">
+          <div className="container mx-auto px-4">
+            <div className="grid lg:grid-cols-2 gap-10 lg:gap-16">
+              {/* Для кого */}
+              <div>
+                <h2 className="font-serif text-2xl md:text-3xl font-semibold mb-3">Для кого наш текстиль</h2>
+                <p className="text-muted-foreground mb-8">Подходит каждому, кто ценит уют и качество</p>
+                <div className="space-y-4">
+                  {[
+                    { icon: Home, title: "Для вашего дома", text: "Создайте атмосферу тепла в каждой комнате — от спальни до кухни" },
+                    { icon: Baby, title: "Для семей с детьми", text: "Гипоаллергенные ткани, безопасные красители — спокойствие для родителей" },
+                    { icon: Hotel, title: "Для отелей и апартаментов", text: "Износостойкий текстиль для гостеприимного бизнеса с оптовыми ценами" },
+                    { icon: Sofa, title: "Для ценителей комфорта", text: "Премиальные материалы для тех, кто выбирает лучшее" },
+                  ].map((item, i) => (
+                    <div key={i} className="flex gap-4 p-4 rounded-xl bg-card border border-border/60 hover:border-primary/40 transition-colors">
+                      <div className="shrink-0 w-11 h-11 rounded-lg bg-primary/10 flex items-center justify-center">
+                        <item.icon className="h-5 w-5 text-primary" />
+                      </div>
+                      <div>
+                        <h3 className="font-medium mb-1">{item.title}</h3>
+                        <p className="text-sm text-muted-foreground leading-relaxed">{item.text}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Для каких случаев */}
+              <div>
+                <h2 className="font-serif text-2xl md:text-3xl font-semibold mb-3">Для каких случаев</h2>
+                <p className="text-muted-foreground mb-8">Идеальное решение в любой момент жизни</p>
+                <div className="space-y-4">
+                  {[
+                    { icon: Home, title: "Обновление интерьера", text: "Свежие коллекции, чтобы преобразить дом без ремонта" },
+                    { icon: Gift, title: "Подарок близким", text: "Стильная упаковка и беспроигрышный выбор на любой праздник" },
+                    { icon: CalendarHeart, title: "Новоселье и свадьба", text: "Комплекты, с которых начинается история нового дома" },
+                    { icon: Sparkles, title: "Сезонная замена", text: "Лёгкое летнее или тёплое зимнее — текстиль под настроение года" },
+                  ].map((item, i) => (
+                    <div key={i} className="flex gap-4 p-4 rounded-xl bg-card border border-border/60 hover:border-primary/40 transition-colors">
+                      <div className="shrink-0 w-11 h-11 rounded-lg bg-primary/10 flex items-center justify-center">
+                        <item.icon className="h-5 w-5 text-primary" />
+                      </div>
+                      <div>
+                        <h3 className="font-medium mb-1">{item.title}</h3>
+                        <p className="text-sm text-muted-foreground leading-relaxed">{item.text}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 
