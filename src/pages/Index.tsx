@@ -38,7 +38,7 @@ export default function Index() {
         <section className="relative py-20 md:py-32 overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-[hsl(25,60%,96%)] to-[hsl(15,40%,92%)]" />
           <div className="container mx-auto px-4 relative z-10 text-center">
-            <h1 className="font-serif text-4xl md:text-6xl font-bold tracking-tight text-foreground dark:text-background mb-4">
+            <h1 className="font-serif text-5xl md:text-8xl font-bold tracking-tight text-foreground dark:text-background mb-4">
               Текстиль с душой
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground max-w-xl mx-auto mb-8">
