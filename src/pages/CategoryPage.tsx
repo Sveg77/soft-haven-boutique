@@ -45,7 +45,10 @@ function ProductCard({ p }: { p: any }) {
           )}
         </div>
         <h3 className="font-medium text-sm mt-0.5">{p.name}</h3>
-        <p className="font-semibold text-sm mt-1">{Number(p.price).toLocaleString()} ₽</p>
+        <p className="font-semibold text-sm mt-1">
+          {p.characteristics?.priceMatrix ? "от " : ""}
+          {Number(p.price).toLocaleString()} ₽
+        </p>
       </Link>
       <div className="mt-auto pt-3 flex items-center gap-2">
         <div className="flex items-center border rounded-full">
