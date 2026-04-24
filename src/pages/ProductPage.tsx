@@ -158,7 +158,7 @@ export default function ProductPage() {
           <div className="flex flex-col justify-center">
             <p className="text-sm text-muted-foreground mb-1">{(product as any).categories?.name}</p>
             <h1 className="font-serif text-3xl font-semibold mb-2">{product.name}</h1>
-            <p className="text-2xl font-bold mb-4">{Number(product.price).toLocaleString()} ₽</p>
+            <p className="text-2xl font-bold mb-4">{displayPrice.toLocaleString()} ₽</p>
             {product.description && (
               <p className="text-muted-foreground leading-relaxed mb-6">{product.description}</p>
             )}
