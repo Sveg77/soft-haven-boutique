@@ -170,7 +170,10 @@ export default function Index() {
                     </div>
                     <p className="text-xs text-muted-foreground">{p.categories?.name}</p>
                     <h3 className="font-medium text-sm mt-0.5">{p.name}</h3>
-                    <p className="font-semibold text-sm mt-1">{Number(p.price).toLocaleString()} ₽</p>
+                    <p className="font-semibold text-sm mt-1">
+                      {(p as any).characteristics?.priceMatrix ? "от " : ""}
+                      {Number(p.price).toLocaleString()} ₽
+                    </p>
                   </Link>
                 ))}
               </div>

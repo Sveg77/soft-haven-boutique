@@ -51,10 +51,22 @@ export default function ProductPage() {
   const colors: string[] = Array.isArray(chars["Цвет"]) ? chars["Цвет"] : [];
   const sizes: string[] = Array.isArray(chars["Размер"]) ? chars["Размер"] : [];
   const materials: string[] = Array.isArray(chars["Материал"]) ? chars["Материал"] : [];
+  const priceMatrix: Record<string, number> | undefined =
+    chars.priceMatrix && typeof chars.priceMatrix === "object" ? chars.priceMatrix : undefined;
   const productImages: string[] = getProductImages(product);
 
   const currentImage = productImages[selectedColorIdx] || productImages[0] || product.image_url;
   const currentColor = colors[selectedColorIdx] || colors[0] || "";
+
+  const matrixPrice = (() => {
+    if (!priceMatrix) return null;
+    const s = selectedSize || sizes[0];
+    const m = selectedMaterial || materials[0];
+    if (!s || !m) return null;
+    const v = priceMatrix[`${s}|${m}`];
+    return typeof v === "number" ? v : null;
+  })();
+  const displayPrice = matrixPrice ?? Number(product.price);
 
   const handleAdd = () => {
     const color = currentColor;
@@ -73,7 +85,7 @@ export default function ProductPage() {
     addItem({
       id: product.id,
       name: product.name,
-      price: Number(product.price),
+      price: displayPrice,
       image_url: currentImage,
       color,
       size,
@@ -146,7 +158,7 @@ export default function ProductPage() {
           <div className="flex flex-col justify-center">
             <p className="text-sm text-muted-foreground mb-1">{(product as any).categories?.name}</p>
             <h1 className="font-serif text-3xl font-semibold mb-2">{product.name}</h1>
-            <p className="text-2xl font-bold mb-4">{Number(product.price).toLocaleString()} ₽</p>
+            <p className="text-2xl font-bold mb-4">{displayPrice.toLocaleString()} ₽</p>
             {product.description && (
               <p className="text-muted-foreground leading-relaxed mb-6">{product.description}</p>
             )}
