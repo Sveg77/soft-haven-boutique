@@ -134,7 +134,9 @@ export default function ChatWidget() {
 
       {/* Chat window */}
       {open && (
-        <div className="fixed bottom-6 right-6 z-50 w-[360px] max-h-[520px] bg-background border rounded-2xl shadow-2xl flex flex-col overflow-hidden">
+        <div className="fixed z-50 bg-background border shadow-2xl flex flex-col overflow-hidden
+          inset-x-2 bottom-2 top-2 rounded-2xl
+          sm:inset-auto sm:bottom-6 sm:right-6 sm:top-auto sm:w-[360px] sm:max-h-[min(520px,calc(100dvh-3rem))] sm:rounded-2xl">
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-3 bg-primary text-primary-foreground rounded-t-2xl">
             <span className="font-semibold text-sm">Уютный Дом — Помощник</span>
@@ -186,7 +188,7 @@ export default function ChatWidget() {
           ) : (
             <>
               {/* Messages */}
-              <div className="flex-1 overflow-y-auto p-3 space-y-2 min-h-[280px] max-h-[380px]">
+              <div className="flex-1 overflow-y-auto p-3 space-y-2 min-h-0">
                 {messages.map((m, i) => (
                   <div
                     key={i}
