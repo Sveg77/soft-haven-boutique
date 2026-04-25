@@ -98,3 +98,20 @@
     font-family: 'Georgia', 'Times New Roman', serif;
   }
 }
+
+.phone-input-wrapper .PhoneInputCountry {
+  margin-right: 0.5rem;
+  display: flex;
+  align-items: center;
+}
+.phone-input-wrapper .PhoneInputCountrySelect {
+  cursor: pointer;
+}
+.phone-input-wrapper .PhoneInputInput {
+  flex: 1;
+  background: transparent;
+  outline: none;
+  border: none;
+  font-size: inherit;
+  color: inherit;
+}
