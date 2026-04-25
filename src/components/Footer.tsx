@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Clock, Truck } from "lucide-react";
+import { Clock, Truck, Send } from "lucide-react";
 
 export default function Footer() {
   return (
@@ -33,6 +33,15 @@ export default function Footer() {
                 <p className="flex items-center gap-2">
                   <Truck className="h-3.5 w-3.5 flex-shrink-0" /> Доставка: 10:00–18:00
                 </p>
+                <a
+                  href="https://t.me/sofrtextil_bot"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 hover:text-foreground transition-colors"
+                  aria-label="Telegram-бот"
+                >
+                  <Send className="h-3.5 w-3.5 flex-shrink-0" /> Telegram-бот
+                </a>
               </div>
             </div>
           </div>
