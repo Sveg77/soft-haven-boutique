@@ -77,6 +77,8 @@ ${catalogText}
 4. Когда покупатель согласен с заказом — вызови функцию place_order с массивом товаров.
 5. Если не можешь помочь или покупатель просит живого оператора — вызови request_operator.
 6. Не выдумывай товары, которых нет в каталоге.`;
+6. Не выдумывай товары, которых нет в каталоге.
+7. СКИДКА: при сумме заказа от 25 000 ₽ автоматически действует скидка 5%. Когда подсчитываешь стоимость заказа — всегда показывай: сумму товаров, размер скидки (если применима) и итоговую стоимость к оплате. Если до скидки не хватает — подскажи покупателю, сколько ещё нужно добрать до 25 000 ₽, чтобы получить 5%.`;
 
     const tools = [
       {
@@ -174,7 +176,10 @@ ${catalogText}
             .eq("id", session_id)
             .single();
 
-          const total = args.items.reduce((s: number, i: any) => s + i.price * i.quantity, 0);
+          const subtotal = args.items.reduce((s: number, i: any) => s + i.price * i.quantity, 0);
+          const hasDiscount = subtotal >= 25000;
+          const discount = hasDiscount ? Math.round(subtotal * 0.05) : 0;
+          const total = subtotal - discount;
 
           const { data: order } = await supabase.from("orders").insert({
             customer_name: session?.customer_name || "Чат-клиент",
@@ -215,7 +220,10 @@ ${catalogText}
             }).catch((err) => console.error("Telegram notify error:", err));
           }
 
-          const confirmMsg = `✅ Заказ оформлен! Номер: ${order?.id?.slice(0, 8)}. Сумма: ${total}₽. Мы свяжемся с вами для подтверждения.`;
+          const discountLine = hasDiscount
+            ? `\nСумма товаров: ${subtotal.toLocaleString("ru-RU")} ₽\nСкидка 5%: −${discount.toLocaleString("ru-RU")} ₽\nИтого к оплате: ${total.toLocaleString("ru-RU")} ₽`
+            : `\nИтого к оплате: ${total.toLocaleString("ru-RU")} ₽`;
+          const confirmMsg = `✅ Заказ оформлен! Номер: ${order?.id?.slice(0, 8)}.${discountLine}\n\nМы свяжемся с вами для подтверждения.`;
           await supabase.from("chat_messages").insert({ session_id, role: "assistant", content: confirmMsg });
 
           return new Response(JSON.stringify({ reply: confirmMsg }), {
