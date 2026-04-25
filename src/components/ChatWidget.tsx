@@ -6,6 +6,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { supabase } from "@/integrations/supabase/client";
 import { Link, useLocation } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
+import PhoneInput, { isValidPhoneNumber } from "react-phone-number-input";
+import "react-phone-number-input/style.css";
 
 type Msg = { role: "user" | "assistant" | "operator"; content: string };
 
@@ -63,6 +65,7 @@ export default function ChatWidget() {
 
   const startSession = async () => {
     if (!formName.trim() || !formPhone.trim() || !accepted) return;
+    if (!isValidPhoneNumber(formPhone)) return;
     setFormLoading(true);
     const { data, error } = await supabase
       .from("chat_sessions")
@@ -163,10 +166,19 @@ export default function ChatWidget() {
                 value={formName}
                 onChange={(e) => setFormName(e.target.value)}
               />
-              <Input
+              <PhoneInput
                 placeholder="Телефон"
                 value={formPhone}
-                onChange={(e) => setFormPhone(e.target.value)}
+                onChange={(v) => setFormPhone(v || "")}
+                defaultCountry="RU"
+                international
+                countryCallingCodeEditable={false}
+                addInternationalOption={false}
+                className="phone-input-wrapper flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2"
+                numberInputProps={{
+                  className: "flex-1 bg-transparent outline-none placeholder:text-muted-foreground",
+                  maxLength: 20,
+                }}
               />
               <label className="flex items-start gap-2 text-xs text-muted-foreground">
                 <Checkbox checked={accepted} onCheckedChange={(v) => setAccepted(v === true)} className="mt-0.5" />
@@ -179,7 +191,7 @@ export default function ChatWidget() {
               </label>
               <Button
                 onClick={startSession}
-                disabled={!formName.trim() || !formPhone.trim() || !accepted || formLoading}
+                disabled={!formName.trim() || !formPhone || !isValidPhoneNumber(formPhone) || !accepted || formLoading}
                 className="w-full"
               >
                 {formLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Начать чат"}
