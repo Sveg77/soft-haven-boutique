@@ -35,20 +35,27 @@ serve(async (req) => {
 
     const storageBase = `${supabaseUrl}/storage/v1/object/public/product-images/`;
 
-    const getImageUrl = (p: any): string => {
+    const normalizeUrl = (img: string): string =>
+      img.startsWith("http") ? img : `${storageBase}${img}`;
+
+    const getImagesList = (p: any): string[] => {
       if (Array.isArray(p.images) && p.images.length > 0) {
-        const img = p.images[0];
-        return img.startsWith("http") ? img : `${storageBase}${img}`;
+        return p.images.map(normalizeUrl);
       }
-      if (p.image_url) {
-        return p.image_url.startsWith("http") ? p.image_url : `${storageBase}${p.image_url}`;
-      }
-      return "";
+      if (p.image_url) return [normalizeUrl(p.image_url)];
+      return [];
     };
 
     const catalogText = (products || []).map((p: any) => {
-      const imgUrl = getImageUrl(p);
-      const imgPart = imgUrl ? ` | Фото: ${imgUrl}` : "";
+      const imgs = getImagesList(p);
+      const colors: string[] = Array.isArray(p.characteristics?.["Цвет"]) ? p.characteristics["Цвет"] : [];
+      let imgPart = "";
+      if (colors.length && imgs.length) {
+        const pairs = colors.map((c, i) => `${c}: ${imgs[i] || imgs[0]}`).join("; ");
+        imgPart = ` | Фото по цветам: ${pairs}`;
+      } else if (imgs.length) {
+        imgPart = ` | Фото: ${imgs[0]}`;
+      }
       return `- ${p.name} | ${p.price}₽ | ${p.description || ""} | ${JSON.stringify(p.characteristics || {})} | Категория: ${p.categories?.name || "—"}${imgPart}`;
     }).join("\n");
 
@@ -73,7 +80,7 @@ ${catalogText}
 Правила:
 1. Отвечай на русском языке, дружелюбно и кратко.
 2. Рекомендуй товары из каталога. Называй точные цены.
-3. Когда рекомендуешь товар — ОБЯЗАТЕЛЬНО вставляй фото товара в формате markdown: ![название](ссылка). Используй ссылку из поля "Фото" каталога.
+3. Когда рекомендуешь товар — ОБЯЗАТЕЛЬНО вставляй фото товара в формате markdown: ![название](ссылка). Если у товара указано "Фото по цветам" — ВЫБИРАЙ ссылку, соответствующую цвету, о котором спросил покупатель. Если цвет не указан — бери первое фото.
 4. Когда покупатель согласен с заказом — вызови функцию place_order с массивом товаров.
 5. Если не можешь помочь или покупатель просит живого оператора — вызови request_operator.
 6. Не выдумывай товары, которых нет в каталоге.
