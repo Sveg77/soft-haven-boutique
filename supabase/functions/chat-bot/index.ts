@@ -84,7 +84,17 @@ ${catalogText}
 4. Когда покупатель согласен с заказом — вызови функцию place_order с массивом товаров.
 5. Если не можешь помочь или покупатель просит живого оператора — вызови request_operator.
 6. Не выдумывай товары, которых нет в каталоге.
-7. СКИДКА: при сумме заказа от 25 000 ₽ автоматически действует скидка 5%. Когда подсчитываешь стоимость заказа — всегда показывай покупателю: сумму товаров, размер скидки (если применима) и итоговую стоимость к оплате. Если до скидки не хватает — подскажи, сколько ещё нужно добрать до 25 000 ₽, чтобы получить 5%.`;
+7. СКИДКА: при сумме заказа от 25 000 ₽ автоматически действует скидка 5%. Когда подсчитываешь стоимость заказа — всегда показывай покупателю: сумму товаров, размер скидки (если применима) и итоговую стоимость к оплате. Если до скидки не хватает — подскажи, сколько ещё нужно добрать до 25 000 ₽, чтобы получить 5%.
+8. ДОСТАВКА. Условия:
+   • По России — транспортными компаниями (СДЭК, Почта России и др.) по тарифам перевозчика. Сроки и стоимость рассчитываются индивидуально при оформлении.
+   • Собственным транспортом в радиусе 50 км: бесплатно при заказе от 25 000 ₽, иначе 30 ₽ за км.
+   • Самовывоз — бесплатно, адрес и время согласуются при подтверждении заказа.
+   Оплата — при получении.
+9. ПЕРЕД ОФОРМЛЕНИЕМ заказа ОБЯЗАТЕЛЬНО уточни у покупателя:
+   - способ получения (самовывоз / доставка собственным транспортом / транспортная компания);
+   - если выбрана доставка собственным транспортом — желаемую дату (в формате ГГГГ-ММ-ДД, не раньше завтрашнего дня) и время (в формате ЧЧ:ММ, с 10:00 до 20:00);
+   - адрес доставки (если применимо).
+   Эти данные передавай в place_order: delivery_method, delivery_date, delivery_time, address, comment.`;
 
     const tools = [
       {
@@ -109,6 +119,9 @@ ${catalogText}
                 },
               },
               delivery_method: { type: "string", enum: ["pickup", "delivery"] },
+              delivery_date: { type: "string", description: "Дата доставки в формате YYYY-MM-DD (только для собственной доставки)" },
+              delivery_time: { type: "string", description: "Время доставки в формате HH:MM (только для собственной доставки)" },
+              address: { type: "string", description: "Адрес доставки (для собственной доставки или транспортной компании)" },
               comment: { type: "string" },
             },
             required: ["items"],
@@ -191,6 +204,9 @@ ${catalogText}
             customer_name: session?.customer_name || "Чат-клиент",
             phone: session?.phone || "",
             delivery_method: args.delivery_method || "pickup",
+            address: args.address || null,
+            delivery_date: args.delivery_date || null,
+            delivery_time: args.delivery_time || null,
             comment: args.comment || "Заказ через чат-бота",
             total,
             status: "new",
@@ -221,15 +237,29 @@ ${catalogText}
                 total,
                 items: args.items,
                 delivery_method: args.delivery_method || "pickup",
+                address: args.address || "",
+                delivery_date: args.delivery_date || "",
+                delivery_time: args.delivery_time || "",
                 comment: args.comment || "Заказ через чат-бота",
               }),
             }).catch((err) => console.error("Telegram notify error:", err));
           }
 
+          const deliveryLine = (() => {
+            if (args.delivery_method === "delivery") {
+              const parts = ["Доставка собственным транспортом"];
+              if (args.address) parts.push(`Адрес: ${args.address}`);
+              if (args.delivery_date) parts.push(`Дата: ${args.delivery_date}`);
+              if (args.delivery_time) parts.push(`Время: ${args.delivery_time}`);
+              return `\n${parts.join("\n")}`;
+            }
+            if (args.delivery_method === "pickup") return `\nСамовывоз (адрес и время согласуем по телефону)`;
+            return "";
+          })();
           const discountLine = hasDiscount
             ? `\nСумма товаров: ${subtotal.toLocaleString("ru-RU")} ₽\nСкидка 5%: −${discount.toLocaleString("ru-RU")} ₽\nИтого к оплате: ${total.toLocaleString("ru-RU")} ₽`
             : `\nИтого к оплате: ${total.toLocaleString("ru-RU")} ₽`;
-          const confirmMsg = `✅ Заказ оформлен! Номер: ${order?.id?.slice(0, 8)}.${discountLine}\n\nМы свяжемся с вами для подтверждения.`;
+          const confirmMsg = `✅ Заказ оформлен! Номер: ${order?.id?.slice(0, 8)}.${deliveryLine}${discountLine}\n\nМы свяжемся с вами для подтверждения.`;
           await supabase.from("chat_messages").insert({ session_id, role: "assistant", content: confirmMsg });
 
           return new Response(JSON.stringify({ reply: confirmMsg }), {
